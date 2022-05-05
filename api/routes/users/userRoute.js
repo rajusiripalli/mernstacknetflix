@@ -1,6 +1,6 @@
 const express = require('express');
 const { protect } = require('../../middleware/authMiddleware');
-const { Userupdate, Userdelete, getUser }  = require('./userController')
+const { Userupdate, Userdelete, getUser, getallUsers, getuserStats }  = require('./userController')
 
 
 const userRouter = express.Router();
@@ -13,8 +13,10 @@ const userRouter = express.Router();
     userRouter.get('/find/:id',  getUser)
 
     //GET ALL
+    userRouter.post('/find/users', protect, getallUsers)
 
     //GET USER STATS
+    userRouter.get('/stats', getuserStats)
 
 
 module.exports  = userRouter

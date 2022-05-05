@@ -28,7 +28,7 @@ const Userupdate = asyncHandler( async (req, res) => {
     }
 })
 
-//@desc Update User
+//@desc Delete User
 //@route POST /api/user/id
 //@acces Private
 const Userdelete = asyncHandler( async (req, res) => {
@@ -49,7 +49,7 @@ const Userdelete = asyncHandler( async (req, res) => {
 })
 
 //@desc Update User
-//@route POST /api/user/id
+//@route POST /api/user/find/id
 //@acces Public
 const getUser = asyncHandler( async (req, res) => {
 
@@ -64,8 +64,74 @@ const getUser = asyncHandler( async (req, res) => {
 })
 
 
+//@desc Get All Users
+//@route POST /api/user/find/users
+//@acces Private
+const getallUsers = asyncHandler( async (req, res) => {
+    const query = req.query.new
+    if(req.user.isAdmin){
+           
+            try {
+                const users = query ? await User.find().sort({ _id: -1 }).limit(4) : await User.find();
+                res.status(200).json(users)
+            } catch (error) {
+                    res.status(500)
+                    throw new Error(error);
+            }
+    }else{
+        res.status(403)
+        throw new Error('Your not allowed to see all users!')
+    }
+})
+
+//@desc Get User Stats
+//@route POST /api/user/stats
+//@acces Private
+const getuserStats = asyncHandler( async (req, res) => {
+    const today = new Date();
+    const latYear = today.setFullYear(today.setFullYear() - 1);
+
+    const monthsArray = [
+        "january",
+        "february",
+        "march",
+        "april",
+        "may",
+        "june",
+        "july",
+        "august",
+        "september",
+        "october",
+        "november",
+        "december",
+    ]
+
+    try {
+        const data = await User.aggregate([
+            {
+                $project: {
+                    month: {$month: "$createdAt"}
+                },
+            },
+            {
+                $group: {
+                    _id: "$month",
+                    total: { $sum: 1},
+                }
+            }
+        ])
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500)
+        throw new Error(error)
+    }
+})
+
 module.exports = {
     Userupdate,
     Userdelete,
-    getUser
+    getUser,
+    getallUsers,
+    getuserStats
+    
 }
