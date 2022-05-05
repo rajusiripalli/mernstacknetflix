@@ -1,19 +1,20 @@
-const express = require('express')
-const { Userupdate }  = require('./userController')
+const express = require('express');
+const { protect } = require('../../middleware/authMiddleware');
+const { Userupdate, Userdelete, getUser }  = require('./userController')
 
 
 const userRouter = express.Router();
 
-//UPDATE
-userRouter.put('/:id', Userupdate)
+    //UPDATE
+    userRouter.put('/:id', protect, Userupdate)
+    //DELETE
+    userRouter.delete('/:id', protect, Userdelete)
+    //GET
+    userRouter.get('/find/:id',  getUser)
 
-//DELETE
+    //GET ALL
 
-//GET
-
-//GET ALL
-
-//GET USER STATS
+    //GET USER STATS
 
 
 module.exports  = userRouter
