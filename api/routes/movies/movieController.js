@@ -1,7 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const { findById } = require('../../models/Movie');
 const Movie = require('../../models/Movie');
-const { move } = require('./movieRoute');
 
 //@desc Create Movie
 //@route POST /api/movie
@@ -54,6 +52,25 @@ const DeleteMovie = asyncHandler( async (req, res) => {
         try {
             await Movie.findByIdAndDelete(req.params.id);
             res.status(200).json('The movie has been deleted...');
+        } catch (error) {
+            res.status(500)
+            throw new Error(error);
+        }
+    }else{
+        res.status(403)
+        throw new Error('Your not allowed !');
+    }
+
+})
+
+//@desc Find Movie
+//@route GET /api/movie/:id
+//@acces Private
+const GetAllMovie = asyncHandler( async (req, res) => {
+    if(req.user.isAdmin){
+        try {
+            const movies = await Movie.find()
+            res.status(200).json(movies.reverse());
         } catch (error) {
             res.status(500)
             throw new Error(error);
@@ -119,6 +136,7 @@ module.exports = {
     UpdateMovie,
     DeleteMovie,
     GetMovie, 
-    GetRandomMovie
+    GetRandomMovie,
+    GetAllMovie
     
 }

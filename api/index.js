@@ -7,6 +7,7 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const userauthRouter = require('./routes/userAuth/userAuthRoute');
 const userRouter = require('./routes/users/userRoute');
 const movieRouter = require('./routes/movies/movieRoute');
+const listRouter = require('./routes/lists/listRoute');
 
 const app = express();
 
@@ -21,7 +22,9 @@ app.use(cors());
 
 app.use('/api', userauthRouter);
 app.use('/api/user', userRouter);
-app.use('/api/movies', movieRouter)
+app.use('/api/movies', movieRouter);
+app.use('/api/lists', listRouter);
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
