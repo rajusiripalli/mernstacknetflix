@@ -47,12 +47,28 @@ const DeleteList = asyncHandler( async (req, res) => {
 
 const GetMovies =  asyncHandler(async (req, res)=> {
     const typeQuery = req.query.type;
-    const genreQuery = req.query.type;
+    const genreQuery = req.query.genre;
 
     let list = [];
 
     try {
-        
+        if(typeQuery){
+            if(genreQuery){
+                list = await List.aggregate([
+                    { $sample: {size: 10}},
+                    {$match : {type: typeQuery, genre: genreQuery}}
+                ])
+            }else{
+                list = await List.aggregate([
+                    { $sample: {size: 10}},
+                    {$match : {type: typeQuery}}
+                ])
+            }
+
+        }else{
+            list = await List.aggregate([{ $sample: {size: 10}}])
+        }
+        res.status(200).json(list);
     } catch (error) {
         res.status(400)
         throw new Error(error);
@@ -62,6 +78,7 @@ const GetMovies =  asyncHandler(async (req, res)=> {
 
 module.exports = {
     CreateList,
-    DeleteList
+    DeleteList,
+    GetMovies,
  
 }
